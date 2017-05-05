@@ -3,22 +3,61 @@
   <head>
     <script src="jquery.js"></script>
     <script src="data_generator.js"></script>
+    <link rel="stylesheet" type="text/css" href="main.css">
+    <title>Twittler</title>
   </head>
   <body>
+  <div>
+    <button type="button" class="btn btn-primary">Get Most Recent Tweets</button>
+  </div>
     <script>
-
+    //jQuery
       $(document).ready(function(){
         var $body = $('body');
         $body.html('');
 
-        var index = streams.home.length - 1;
-        while(index >= 0){
-          var tweet = streams.home[index];
-          var $tweet = $('<div></div>');
-          $tweet.text('@' + tweet.user + ': ' + tweet.message);
-          $tweet.appendTo($body);
-          index -= 1;
+        function refresh() {
+          $body.html('');
+          var index = streams.home.length - 1;
+          while(index >= 0){
+            var tweet = streams.home[index];
+            var $tweet = $('<div class="tweet"><span class="user"></span><span class="message"></span></div>');
+            $tweet.children(".user").text('@' + tweet.user)
+            $tweet.children('.message').text(': ' + tweet.message);
+            $tweet.appendTo($body);
+            $tweet.addClass('box');
+
+            var $timestamp = $('<div class="timestamp"></div>');
+            $timestamp.text(tweet.created_at);
+            $timestamp.appendTo($tweet);
+
+            index -= 1;
+          }
+          $('.user').on('click', function() {
+            $body.html('');
+            var chosenUser = $(this).text().slice(1);
+            console.log(chosenUser);
+            index = streams.users[chosenUser].length - 1;
+            while(index >= 0) {
+              tweet = streams.users[chosenUser][index];
+              $tweet = $('<div class="tweet"><span class="user"></span><span class="message"></span></div>');
+            $tweet.children(".user").text('@' + tweet.user)
+            $tweet.children('.message').text(' : ' + tweet.message);
+            $tweet.appendTo($body);
+            $tweet.addClass('box');
+
+            var $timestamp = $('<div class="timestamp"></div>');
+            $timestamp.text(tweet.created_at);
+            $timestamp.appendTo($tweet);
+
+            index -= 1;
+            }
+          });
         }
+        var repeat = setInterval(refresh, 2000);
+        setTimeout(function() {
+          clearInterval(repeat);
+        }, 10000);
 
       });
 
